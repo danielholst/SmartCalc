@@ -1,0 +1,2 @@
+# SmartCalc
+A smarter calculator
