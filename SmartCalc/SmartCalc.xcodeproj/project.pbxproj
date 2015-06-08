@@ -1,0 +1,405 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D18BB7E01B257B84004E3657 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D18BB7DF1B257B84004E3657 /* main.cpp */; };
+		D18BB7E51B257B84004E3657 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D18BB7E41B257B84004E3657 /* Images.xcassets */; };
+		D18BB7E81B257B84004E3657 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D18BB7E61B257B84004E3657 /* Main.storyboard */; };
+		D18BB7FE1B257BE3004E3657 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D18BB7FD1B257BE3004E3657 /* Cocoa.framework */; };
+		D18BB8021B257D83004E3657 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D18BB8011B257D83004E3657 /* OpenGL.framework */; };
+		D18BB8031B258227004E3657 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D18BB7FF1B257C0D004E3657 /* SDL2.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D18BB7EE1B257B84004E3657 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D18BB7CF1B257B84004E3657 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D18BB7D61B257B84004E3657;
+			remoteInfo = SmartCalc;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D18BB7D71B257B84004E3657 /* SmartCalc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D18BB7DB1B257B84004E3657 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D18BB7DF1B257B84004E3657 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D18BB7E41B257B84004E3657 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D18BB7E71B257B84004E3657 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D18BB7ED1B257B84004E3657 /* SmartCalcTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SmartCalcTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D18BB7FD1B257BE3004E3657 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		D18BB7FF1B257C0D004E3657 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		D18BB8011B257D83004E3657 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D18BB7D41B257B84004E3657 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D18BB8021B257D83004E3657 /* OpenGL.framework in Frameworks */,
+				D18BB7FE1B257BE3004E3657 /* Cocoa.framework in Frameworks */,
+				D18BB8031B258227004E3657 /* SDL2.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D18BB7EA1B257B84004E3657 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D18BB7CE1B257B84004E3657 = {
+			isa = PBXGroup;
+			children = (
+				D18BB8011B257D83004E3657 /* OpenGL.framework */,
+				D18BB7FF1B257C0D004E3657 /* SDL2.framework */,
+				D18BB7FD1B257BE3004E3657 /* Cocoa.framework */,
+				D18BB7D91B257B84004E3657 /* SmartCalc */,
+				D18BB7D81B257B84004E3657 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D18BB7D81B257B84004E3657 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D18BB7D71B257B84004E3657 /* SmartCalc.app */,
+				D18BB7ED1B257B84004E3657 /* SmartCalcTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D18BB7D91B257B84004E3657 /* SmartCalc */ = {
+			isa = PBXGroup;
+			children = (
+				D18BB7E41B257B84004E3657 /* Images.xcassets */,
+				D18BB7E61B257B84004E3657 /* Main.storyboard */,
+				D18BB7DA1B257B84004E3657 /* Supporting Files */,
+			);
+			path = SmartCalc;
+			sourceTree = "<group>";
+		};
+		D18BB7DA1B257B84004E3657 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D18BB7DB1B257B84004E3657 /* Info.plist */,
+				D18BB7DF1B257B84004E3657 /* main.cpp */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D18BB7D61B257B84004E3657 /* SmartCalc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D18BB7F71B257B84004E3657 /* Build configuration list for PBXNativeTarget "SmartCalc" */;
+			buildPhases = (
+				D18BB7D31B257B84004E3657 /* Sources */,
+				D18BB7D41B257B84004E3657 /* Frameworks */,
+				D18BB7D51B257B84004E3657 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SmartCalc;
+			productName = SmartCalc;
+			productReference = D18BB7D71B257B84004E3657 /* SmartCalc.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D18BB7EC1B257B84004E3657 /* SmartCalcTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D18BB7FA1B257B84004E3657 /* Build configuration list for PBXNativeTarget "SmartCalcTests" */;
+			buildPhases = (
+				D18BB7E91B257B84004E3657 /* Sources */,
+				D18BB7EA1B257B84004E3657 /* Frameworks */,
+				D18BB7EB1B257B84004E3657 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D18BB7EF1B257B84004E3657 /* PBXTargetDependency */,
+			);
+			name = SmartCalcTests;
+			productName = SmartCalcTests;
+			productReference = D18BB7ED1B257B84004E3657 /* SmartCalcTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D18BB7CF1B257B84004E3657 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = "Daniel Holst";
+				TargetAttributes = {
+					D18BB7D61B257B84004E3657 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					D18BB7EC1B257B84004E3657 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = D18BB7D61B257B84004E3657;
+					};
+				};
+			};
+			buildConfigurationList = D18BB7D21B257B84004E3657 /* Build configuration list for PBXProject "SmartCalc" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D18BB7CE1B257B84004E3657;
+			productRefGroup = D18BB7D81B257B84004E3657 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D18BB7D61B257B84004E3657 /* SmartCalc */,
+				D18BB7EC1B257B84004E3657 /* SmartCalcTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D18BB7D51B257B84004E3657 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D18BB7E51B257B84004E3657 /* Images.xcassets in Resources */,
+				D18BB7E81B257B84004E3657 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D18BB7EB1B257B84004E3657 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D18BB7D31B257B84004E3657 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D18BB7E01B257B84004E3657 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D18BB7E91B257B84004E3657 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D18BB7EF1B257B84004E3657 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D18BB7D61B257B84004E3657 /* SmartCalc */;
+			targetProxy = D18BB7EE1B257B84004E3657 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D18BB7E61B257B84004E3657 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D18BB7E71B257B84004E3657 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D18BB7F51B257B84004E3657 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		D18BB7F61B257B84004E3657 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		D18BB7F81B257B84004E3657 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Frameworks",
+				);
+				INFOPLIST_FILE = SmartCalc/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D18BB7F91B257B84004E3657 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Frameworks",
+				);
+				INFOPLIST_FILE = SmartCalc/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D18BB7FB1B257B84004E3657 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SmartCalcTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SmartCalc.app/Contents/MacOS/SmartCalc";
+			};
+			name = Debug;
+		};
+		D18BB7FC1B257B84004E3657 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SmartCalcTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SmartCalc.app/Contents/MacOS/SmartCalc";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D18BB7D21B257B84004E3657 /* Build configuration list for PBXProject "SmartCalc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D18BB7F51B257B84004E3657 /* Debug */,
+				D18BB7F61B257B84004E3657 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D18BB7F71B257B84004E3657 /* Build configuration list for PBXNativeTarget "SmartCalc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D18BB7F81B257B84004E3657 /* Debug */,
+				D18BB7F91B257B84004E3657 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		D18BB7FA1B257B84004E3657 /* Build configuration list for PBXNativeTarget "SmartCalcTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D18BB7FB1B257B84004E3657 /* Debug */,
+				D18BB7FC1B257B84004E3657 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D18BB7CF1B257B84004E3657 /* Project object */;
+}

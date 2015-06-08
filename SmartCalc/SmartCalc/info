@@ -1,0 +1,10 @@
+How to run project using make ..
+
+make -f (makefile)
+
+
+Tutorial on makefiles:
+http://mrbook.org/blog/tutorials/make/
+
+doc on make:
+http://www.gnu.org/software/make/manual/make.html#Makefile-Arguments

@@ -26,3 +26,15 @@
 *.exe
 *.out
 *.app
+
+# Mac specific
+*.DS_Store
+.DS_Store
+
+# Xcode files
+*.swp
+*~.nib
+build/
+*.pbxuser
+*.perspective
+*.perspectivev3
