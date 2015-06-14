@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>06F2B76F-7B5F-4807-8F83-579155FC5A3B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SmartCalc</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>C54400B6CF9077DC53EFBDE0C16F9FAE1AE5FCEB</key>
+		<string>https://github.com/danielholst/SmartCalc.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SmartCalc/SmartCalc.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>C54400B6CF9077DC53EFBDE0C16F9FAE1AE5FCEB</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/danielholst/SmartCalc.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>C54400B6CF9077DC53EFBDE0C16F9FAE1AE5FCEB</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C54400B6CF9077DC53EFBDE0C16F9FAE1AE5FCEB</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SmartCalc</string>
+		</dict>
+	</array>
+</dict>
+</plist>

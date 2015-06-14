@@ -8,20 +8,23 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
-#include "Calculate.h"
-
+//#include "LButton.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 1200;
+const int SCREEN_HEIGHT = 600;
+
 
 //Starts up SDL and creates window
 bool init();
 
 //Loads media
 bool loadMedia();
+
+//set properties of rect
+void setRectProperties(SDL_Rect& prop_button_9, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT);
 
 //Frees media and shuts down SDL
 void close();
@@ -36,10 +39,135 @@ SDL_Window* gWindow = nullptr;
 SDL_Surface* gScreenSurface = nullptr;
 
 //Current displayed PNG image
-SDL_Surface* gPNGSurface = nullptr;
+SDL_Surface* background = nullptr;
+
+//button (9)
+SDL_Surface* button_9 = nullptr;
+
+
+
+//Button constants
+const int BUTTON_WIDTH = 80;
+const int BUTTON_HEIGHT = 80;
+const int TOTAL_BUTTONS = 1;
+
+enum LButtonSprite
+{
+    BUTTON_SPRITE_MOUSE_OUT = 0,
+    BUTTON_SPRITE_MOUSE_OVER_MOTION = 1,
+    BUTTON_SPRITE_MOUSE_DOWN = 2,
+    BUTTON_SPRITE_MOUSE_UP = 3,
+    BUTTON_SPRITE_TOTAL = 4
+};
+
+
+//The mouse button
+class LButton
+{
+public:
+    //Initializes internal variables
+    LButton();
+    
+    //Sets top left position
+    void setPosition( int x, int y );
+    
+    //Handles mouse event
+    void handleEvent( SDL_Event* e );
+    
+    
+private:
+    //Top left position
+    SDL_Point mPosition;
+    
+    //Currently used global sprite
+    LButtonSprite mCurrentSprite;
+};
+
+//#endif /* defined(__SmartCalc__LButton__) */
+
+
+
+LButton::LButton()
+{
+    mPosition.x = 0;
+    mPosition.y = 0;
+    
+    mCurrentSprite = BUTTON_SPRITE_MOUSE_OUT;
+}
+
+void LButton::setPosition( int x, int y )
+{
+    mPosition.x = x;
+    mPosition.y = y;
+}
+
+void LButton::handleEvent( SDL_Event* e )
+{
+    //If mouse event happened
+    if( e->type == SDL_MOUSEMOTION || e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP )
+    {
+        //Get mouse position
+        int x, y;
+        SDL_GetMouseState( &x, &y );
+        
+        //Check if mouse is in button
+        bool inside = true;
+        
+        //Mouse is left of the button
+        if( x < mPosition.x )
+        {
+            inside = false;
+        }
+        //Mouse is right of the button
+        else if( x > mPosition.x + BUTTON_WIDTH )
+        {
+            inside = false;
+        }
+        //Mouse above the button
+        else if( y < mPosition.y )
+        {
+            inside = false;
+        }
+        //Mouse below the button
+        else if( y > mPosition.y + BUTTON_HEIGHT )
+        {
+            inside = false;
+        }
+        
+        //Mouse is outside button
+        if( !inside )
+        {
+            mCurrentSprite = BUTTON_SPRITE_MOUSE_OUT;
+        }
+        //Mouse is inside button
+        else
+        {
+            //Set mouse over sprite
+            switch( e->type )
+            {
+                case SDL_MOUSEMOTION:
+                    mCurrentSprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
+                    break;
+                    
+                case SDL_MOUSEBUTTONDOWN:
+                    std::cout << " pressed button" << std::endl;
+                    mCurrentSprite = BUTTON_SPRITE_MOUSE_DOWN;
+                    break;
+                    
+                case SDL_MOUSEBUTTONUP:
+                    mCurrentSprite = BUTTON_SPRITE_MOUSE_UP;
+                    break;
+            }
+        }
+    }
+}
+
+//button object
+LButton gButtons[TOTAL_BUTTONS];
 
 bool init()
 {
+    
     //Initialization flag
     bool success = true;
     
@@ -52,7 +180,7 @@ bool init()
     else
     {
         //Create window
-        gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+        gWindow = SDL_CreateWindow( "SmartCalc", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( gWindow == nullptr )
         {
             printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -83,22 +211,42 @@ bool loadMedia()
     //Loading success flag
     bool success = true;
     
-    //Load PNG surface
-    gPNGSurface = loadSurface( "SmartCalc.png" );
-    if( gPNGSurface == nullptr )
+    //Load background surface
+    background = loadSurface( "Images/SmartCalc.png" );
+    if( background == nullptr )
     {
         printf( "Failed to load PNG image!\n" );
         success = false;
     }
     
+    //load button image
+    button_9 = loadSurface( "Images/button_9.png" );
+    if( background == nullptr )
+    {
+        printf( "Failed to load PNG image!\n" );
+        success = false;
+    }
+    
+    //Load clickable transparent buttons
+    gButtons[0].setPosition(SCREEN_WIDTH/4, SCREEN_HEIGHT/4);
+
+    
     return success;
+}
+
+void setRectProperties(SDL_Rect& prop_button_9, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT)
+{
+    prop_button_9.x = SCREEN_WIDTH/4;
+    prop_button_9.y = SCREEN_HEIGHT/4;
+    prop_button_9.w = 16;
+    prop_button_9.h = 16;
 }
 
 void close()
 {
     //Free loaded image
-    SDL_FreeSurface( gPNGSurface );
-    gPNGSurface = nullptr;
+    SDL_FreeSurface( background );
+    background = nullptr;
     
     //Destroy window
     SDL_DestroyWindow( gWindow );
@@ -136,9 +284,14 @@ SDL_Surface* loadSurface( std::string path )
     return optimizedSurface;
 }
 
+
 int main( int argc, char* args[] )
 {
-    //Start up SDL and create window
+    //Background layout
+//    Graphics backgroundLayout(SCREEN_WIDTH, SCREEN_HEIGHT);
+    
+    
+//    Start up SDL and create window
     if( !init() )
     {
         printf( "Failed to initialize!\n" );
@@ -172,7 +325,17 @@ int main( int argc, char* args[] )
                 }
                 
                 //Apply the PNG image
-                SDL_BlitSurface( gPNGSurface, nullptr, gScreenSurface, nullptr );
+                SDL_Rect prop_button_9;
+                setRectProperties(prop_button_9, 9, SCREEN_WIDTH, SCREEN_HEIGHT);
+                
+                SDL_BlitSurface( background, nullptr, gScreenSurface, nullptr );
+                SDL_BlitSurface( button_9, nullptr, gScreenSurface, &prop_button_9);
+                
+                //Handle button events
+                for( int i = 0; i < TOTAL_BUTTONS; ++i )
+                {
+                    gButtons[ i ].handleEvent( &e );
+                }
                 
                 //Update the surface
                 SDL_UpdateWindowSurface( gWindow );
