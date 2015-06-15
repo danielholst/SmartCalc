@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <string>
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
@@ -20,8 +21,11 @@ const int SCREEN_HEIGHT = 600;
 //Button constants
 const int BUTTON_WIDTH = 100;
 const int BUTTON_HEIGHT = 100;
-const int TOTAL_BUTTONS = 9;
+const int TOTAL_BUTTONS = 16;
 
+//text string
+int textSize = 0;
+char text[] = " ";
 
 //Starts up SDL and creates window
 bool init();
@@ -53,8 +57,17 @@ SDL_Surface* nrButtons[TOTAL_BUTTONS];
 //display surface
 SDL_Surface* display = nullptr;
 
-// Load a font
+//Load a font
 TTF_Font *font = nullptr;
+
+//Text
+SDL_Surface* textSurface = nullptr;
+
+//Text location
+SDL_Rect textLocation;
+
+//properties for buttons
+SDL_Rect prop_buttons[TOTAL_BUTTONS];
 
 
 enum LButtonSprite
@@ -157,10 +170,19 @@ void LButton::handleEvent( SDL_Event* e )
                     
                 case SDL_MOUSEBUTTONDOWN:
                     std::cout << " pressed button" << std::endl;
+                    if(textSize < 30)
+                    {
+                        char temp[] = "9";
+                        std::strcat(text, temp);
+                        textSize++;
+                    }
+                    
                     mCurrentSprite = BUTTON_SPRITE_MOUSE_DOWN;
                     break;
                     
                 case SDL_MOUSEBUTTONUP:
+//                    text = text + '9';
+//                    textSize++;
                     mCurrentSprite = BUTTON_SPRITE_MOUSE_UP;
                     break;
             }
@@ -173,6 +195,7 @@ LButton gButtons[TOTAL_BUTTONS];
 
 bool init()
 {
+    //text[1] = 3;
     
     // Initialize SDL_ttf library
     if (TTF_Init() != 0)
@@ -182,6 +205,10 @@ bool init()
         exit(1);
     }
     
+    TTF_Font* font = TTF_OpenFont("FreeSans.ttf", 20);
+    SDL_Color foregroundColor = { 255, 255, 255 };
+    SDL_Color backgroundColor = { 0, 0, 0 };
+    textSurface = TTF_RenderText_Shaded(font, text , foregroundColor, backgroundColor );
     
     //Initialization flag
     bool success = true;
@@ -203,6 +230,10 @@ bool init()
         }
         else
         {
+            //Init rect for text field
+            textLocation.x = 30;
+            textLocation.y = 30;
+            
             //Initialize PNG loading
             int imgFlags = IMG_INIT_PNG;
             if( !( IMG_Init( imgFlags ) & imgFlags ) )
@@ -259,34 +290,33 @@ bool loadMedia()
 
 void setRectProperties(SDL_Rect& prop_button, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT)
 {
-    if( nr == 9 || nr == 8 || nr == 7) // top row
-    {
-        prop_button.y = 180;
-    }
-    if( nr == 6 || nr == 5 || nr == 4) // middle row
-    {
-        prop_button.y = 285;
-    }
-    if( nr == 3 || nr == 2 || nr == 1) // bottom row
-    {
-        prop_button.y = 390;
-    }
+    if( nr == 11)
+        prop_button.y = 125;
+    
+    if( nr == 9 || nr == 8 || nr == 7 || nr == 13) // top row
+        prop_button.y = 210;
+    
+    if( nr == 6 || nr == 5 || nr == 4 || nr == 15) // middle row
+        prop_button.y = 305;
+    
+    if( nr == 3 || nr == 2 || nr == 1 || nr == 12) // bottom row
+        prop_button.y = 400;
+    
+    if( nr == 16 || nr == 10 || nr == 14)
+        prop_button.y = 495;
+
     
     if( nr == 9 || nr == 6 || nr == 3)  // right column
-    {
         prop_button.x = 240;  // 30+75+30+75+30
-    }
     
-    if( nr == 8 || nr == 5 || nr == 2)  //middle column
-    {
+    if( nr == 8 || nr == 5 || nr == 2 || nr == 10)  //middle column
         prop_button.x = 135; // 30+75+30
-    }
     
-    if( nr == 7 || nr == 4 || nr == 1)  // left column
-    {
+    if( nr == 7 || nr == 4 || nr == 1 || nr == 16)  // left column
         prop_button.x = 30;
-    }
-
+    
+    if( nr == 11 || nr == 12 || nr == 13  || nr == 14  || nr == 15 )
+        prop_button.x = 320;
 
 }
 
@@ -372,7 +402,6 @@ int main( int argc, char* args[] )
                     }
                 }
                 
-                SDL_Rect prop_buttons[TOTAL_BUTTONS];
                 for(int i = 0; i < TOTAL_BUTTONS; i++)
                 {
                     setRectProperties(prop_buttons[i], i+1, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -406,8 +435,10 @@ int main( int argc, char* args[] )
                 SDL_BlitSurface( background, nullptr, gScreenSurface, nullptr );
                 for(int i = 0; i < TOTAL_BUTTONS; i++)
                 {
-                    SDL_BlitSurface( nrButtons[i], nullptr, gScreenSurface, &(prop_buttons[i] ));
+                    SDL_BlitSurface( nrButtons[i], nullptr, gScreenSurface, &prop_buttons[i] );
                 }
+                
+                SDL_BlitSurface(textSurface, nullptr, gScreenSurface, &textLocation);
                 
                 //Handle button events
                 for( int i = 0; i < TOTAL_BUTTONS; ++i )
@@ -417,6 +448,7 @@ int main( int argc, char* args[] )
                 
                 //Update the surface
                 SDL_UpdateWindowSurface( gWindow );
+
             }
         }
     }
