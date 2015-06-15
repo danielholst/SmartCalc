@@ -17,6 +17,11 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
+//Button constants
+const int BUTTON_WIDTH = 100;
+const int BUTTON_HEIGHT = 100;
+const int TOTAL_BUTTONS = 9;
+
 
 //Starts up SDL and creates window
 bool init();
@@ -43,7 +48,7 @@ SDL_Surface* gScreenSurface = nullptr;
 SDL_Surface* background = nullptr;
 
 //button (9)
-SDL_Surface* button_9 = nullptr;
+SDL_Surface* nrButtons[TOTAL_BUTTONS];
 
 //display surface
 SDL_Surface* display = nullptr;
@@ -51,10 +56,6 @@ SDL_Surface* display = nullptr;
 // Load a font
 TTF_Font *font = nullptr;
 
-//Button constants
-const int BUTTON_WIDTH = 80;
-const int BUTTON_HEIGHT = 80;
-const int TOTAL_BUTTONS = 1;
 
 enum LButtonSprite
 {
@@ -242,13 +243,12 @@ bool loadMedia()
         success = false;
     }
     
-    //load button image
-    button_9 = loadSurface( "Images/button_9.png" );
-    if( background == nullptr )
+    //load button textures
+    for( int i = 0; i < TOTAL_BUTTONS; i++)
     {
-        printf( "Failed to load PNG image!\n" );
-        success = false;
+        nrButtons[i] = loadSurface( "Images/button_" + std::to_string(i + 1) + ".png" );
     }
+    
     
     //Load clickable transparent buttons
     gButtons[0].setPosition(SCREEN_WIDTH/4, SCREEN_HEIGHT/4);
@@ -257,12 +257,37 @@ bool loadMedia()
     return success;
 }
 
-void setRectProperties(SDL_Rect& prop_button_9, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT)
+void setRectProperties(SDL_Rect& prop_button, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT)
 {
-    prop_button_9.x = SCREEN_WIDTH/4;
-    prop_button_9.y = SCREEN_HEIGHT/4;
-    prop_button_9.w = 16;
-    prop_button_9.h = 16;
+    if( nr == 9 || nr == 8 || nr == 7) // top row
+    {
+        prop_button.y = 180;
+    }
+    if( nr == 6 || nr == 5 || nr == 4) // middle row
+    {
+        prop_button.y = 285;
+    }
+    if( nr == 3 || nr == 2 || nr == 1) // bottom row
+    {
+        prop_button.y = 390;
+    }
+    
+    if( nr == 9 || nr == 6 || nr == 3)  // right column
+    {
+        prop_button.x = 240;  // 30+75+30+75+30
+    }
+    
+    if( nr == 8 || nr == 5 || nr == 2)  //middle column
+    {
+        prop_button.x = 135; // 30+75+30
+    }
+    
+    if( nr == 7 || nr == 4 || nr == 1)  // left column
+    {
+        prop_button.x = 30;
+    }
+
+
 }
 
 void close()
@@ -347,14 +372,19 @@ int main( int argc, char* args[] )
                     }
                 }
                 
+                SDL_Rect prop_buttons[TOTAL_BUTTONS];
+                for(int i = 0; i < TOTAL_BUTTONS; i++)
+                {
+                    setRectProperties(prop_buttons[i], i+1, SCREEN_WIDTH, SCREEN_HEIGHT);
+                }
+               
                 
-                // Write text to surface
-                SDL_Surface *text;
-                SDL_Color text_color = {255, 255, 255};
-                text = TTF_RenderText_Solid(font,
-                                            "A journey of a thousand miles begins with a single step.",
-                                            text_color);
-                
+//                // Write text to surface
+//                SDL_Surface *text;
+//                SDL_Color text_color = {255, 255, 255};
+//                text = TTF_RenderText_Solid(font,
+//                                            "A journey of a thousand miles begins with a single step.",
+//                                            text_color);
                 
 //                // Set the video mode
 //                SDL_Window *display = SDL_CreateWindow("displayWindows",
@@ -371,11 +401,13 @@ int main( int argc, char* args[] )
 //                }
                 
                 //Apply the PNG image
-                SDL_Rect prop_button_9;
-                setRectProperties(prop_button_9, 9, SCREEN_WIDTH, SCREEN_HEIGHT);
+
                 
                 SDL_BlitSurface( background, nullptr, gScreenSurface, nullptr );
-                SDL_BlitSurface( button_9, nullptr, gScreenSurface, &prop_button_9);
+                for(int i = 0; i < TOTAL_BUTTONS; i++)
+                {
+                    SDL_BlitSurface( nrButtons[i], nullptr, gScreenSurface, &(prop_buttons[i] ));
+                }
                 
                 //Handle button events
                 for( int i = 0; i < TOTAL_BUTTONS; ++i )
