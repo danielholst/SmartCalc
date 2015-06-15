@@ -8,9 +8,10 @@
 
 #include <iostream>
 #include <stdio.h>
-//#include <SDL2/SDL.h>
+#include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
-//#include "LButton.h"
+#include <SDL2_ttf/SDL_ttf.h>
+
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
@@ -44,7 +45,11 @@ SDL_Surface* background = nullptr;
 //button (9)
 SDL_Surface* button_9 = nullptr;
 
+//display surface
+SDL_Surface* display = nullptr;
 
+// Load a font
+TTF_Font *font = nullptr;
 
 //Button constants
 const int BUTTON_WIDTH = 80;
@@ -168,6 +173,15 @@ LButton gButtons[TOTAL_BUTTONS];
 bool init()
 {
     
+    // Initialize SDL_ttf library
+    if (TTF_Init() != 0)
+    {
+        std::cout << "TTF_Init() Failed: " << TTF_GetError() << std::endl;
+        SDL_Quit();
+        exit(1);
+    }
+    
+    
     //Initialization flag
     bool success = true;
     
@@ -210,6 +224,15 @@ bool loadMedia()
 {
     //Loading success flag
     bool success = true;
+    
+    font = TTF_OpenFont("FreeSans.ttf", 24);
+    if (font == NULL)
+    {
+        std::cout << "TTF_OpenFont() Failed: " << TTF_GetError() << std::endl;
+        TTF_Quit();
+        SDL_Quit();
+        exit(1);
+    }
     
     //Load background surface
     background = loadSurface( "Images/SmartCalc.png" );
@@ -323,6 +346,29 @@ int main( int argc, char* args[] )
                         quit = true;
                     }
                 }
+                
+                
+                // Write text to surface
+                SDL_Surface *text;
+                SDL_Color text_color = {255, 255, 255};
+                text = TTF_RenderText_Solid(font,
+                                            "A journey of a thousand miles begins with a single step.",
+                                            text_color);
+                
+                
+//                // Set the video mode
+//                SDL_Window *display = SDL_CreateWindow("displayWindows",
+//                                                      SDL_WINDOWPOS_UNDEFINED,
+//                                                      SDL_WINDOWPOS_UNDEFINED,
+//                                                      200, 200,
+//                                                      0);
+//
+//                // Apply the text to the display
+//                if (SDL_BlitSurface(text, NULL, display, NULL) != 0)
+//                {
+//                    std::cout << "SDL_BlitSurface() Failed: " << SDL_GetError() << std::endl;
+//                    break;
+//                }
                 
                 //Apply the PNG image
                 SDL_Rect prop_button_9;
