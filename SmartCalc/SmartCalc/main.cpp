@@ -25,7 +25,7 @@ const int TOTAL_BUTTONS = 16;
 
 //text string
 int textSize = 0;
-char text[] = " ";
+char text[20] = " ";
 
 //Starts up SDL and creates window
 bool init();
@@ -52,7 +52,7 @@ SDL_Surface* gScreenSurface = nullptr;
 SDL_Surface* background = nullptr;
 
 //button (9)
-SDL_Surface* nrButtons[TOTAL_BUTTONS];
+SDL_Surface* Buttons[TOTAL_BUTTONS];
 
 //display surface
 SDL_Surface* display = nullptr;
@@ -91,7 +91,7 @@ public:
     void setPosition( int x, int y );
     
     //Handles mouse event
-    void handleEvent( SDL_Event* e );
+    void handleEvent( SDL_Event* e, int nr );
     
     
 private:
@@ -120,7 +120,7 @@ void LButton::setPosition( int x, int y )
     mPosition.y = y;
 }
 
-void LButton::handleEvent( SDL_Event* e )
+void LButton::handleEvent( SDL_Event* e, int nr )
 {
     //If mouse event happened
     if( e->type == SDL_MOUSEMOTION || e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP )
@@ -169,10 +169,11 @@ void LButton::handleEvent( SDL_Event* e )
                     break;
                     
                 case SDL_MOUSEBUTTONDOWN:
-                    std::cout << " pressed button" << std::endl;
+                    std::cout << " pressed button: " << nr << std::endl;
                     if(textSize < 30)
                     {
-                        char temp[] = "9";
+                        char temp[5];
+                        temp + std::to_string(nr);
                         std::strcat(text, temp);
                         textSize++;
                     }
@@ -277,47 +278,76 @@ bool loadMedia()
     //load button textures
     for( int i = 0; i < TOTAL_BUTTONS; i++)
     {
-        nrButtons[i] = loadSurface( "Images/button_" + std::to_string(i + 1) + ".png" );
+        Buttons[i] = loadSurface( "Images/button_" + std::to_string(i + 1) + ".png" );
+        setRectProperties(prop_buttons[i], i+1, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
-    
-    
-    //Load clickable transparent buttons
-    gButtons[0].setPosition(SCREEN_WIDTH/4, SCREEN_HEIGHT/4);
-
     
     return success;
 }
 
 void setRectProperties(SDL_Rect& prop_button, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT)
 {
+    int tempX = 0;
+    int tempY = 0;
+    
     if( nr == 11)
+    {
         prop_button.y = 125;
+        tempY = 125;
+    }
     
     if( nr == 9 || nr == 8 || nr == 7 || nr == 13) // top row
+    {
         prop_button.y = 210;
+        tempY = 210;
+    }
     
     if( nr == 6 || nr == 5 || nr == 4 || nr == 15) // middle row
+    {
         prop_button.y = 305;
+        tempY = 305;
+    }
     
     if( nr == 3 || nr == 2 || nr == 1 || nr == 12) // bottom row
+    {
         prop_button.y = 400;
+        tempY = 400;
+    }
     
     if( nr == 16 || nr == 10 || nr == 14)
+    {
         prop_button.y = 495;
+        tempY = 495;
+    }
 
-    
+    // 30+75+30+75+30
     if( nr == 9 || nr == 6 || nr == 3)  // right column
-        prop_button.x = 240;  // 30+75+30+75+30
+    {
+        prop_button.x = 240;
+        tempX = 240;
+    }
     
+    // 30+75+30
     if( nr == 8 || nr == 5 || nr == 2 || nr == 10)  //middle column
-        prop_button.x = 135; // 30+75+30
+    {
+        prop_button.x = 135;
+        tempX = 135;
+    } 
     
     if( nr == 7 || nr == 4 || nr == 1 || nr == 16)  // left column
+    {
         prop_button.x = 30;
+        tempX = 30;
+    }
     
     if( nr == 11 || nr == 12 || nr == 13  || nr == 14  || nr == 15 )
+    {
         prop_button.x = 320;
-
+        tempX = 320;
+    }
+    
+    //set right position for invisible clickable button
+    gButtons[nr-1].setPosition( tempX, tempY);
 }
 
 void close()
@@ -365,11 +395,8 @@ SDL_Surface* loadSurface( std::string path )
 
 int main( int argc, char* args[] )
 {
-    //Background layout
-//    Graphics backgroundLayout(SCREEN_WIDTH, SCREEN_HEIGHT);
-    
-    
-//    Start up SDL and create window
+
+    //Start up SDL and create window
     if( !init() )
     {
         printf( "Failed to initialize!\n" );
@@ -402,48 +429,19 @@ int main( int argc, char* args[] )
                     }
                 }
                 
-                for(int i = 0; i < TOTAL_BUTTONS; i++)
-                {
-                    setRectProperties(prop_buttons[i], i+1, SCREEN_WIDTH, SCREEN_HEIGHT);
-                }
-               
-                
-//                // Write text to surface
-//                SDL_Surface *text;
-//                SDL_Color text_color = {255, 255, 255};
-//                text = TTF_RenderText_Solid(font,
-//                                            "A journey of a thousand miles begins with a single step.",
-//                                            text_color);
-                
-//                // Set the video mode
-//                SDL_Window *display = SDL_CreateWindow("displayWindows",
-//                                                      SDL_WINDOWPOS_UNDEFINED,
-//                                                      SDL_WINDOWPOS_UNDEFINED,
-//                                                      200, 200,
-//                                                      0);
-//
-//                // Apply the text to the display
-//                if (SDL_BlitSurface(text, NULL, display, NULL) != 0)
-//                {
-//                    std::cout << "SDL_BlitSurface() Failed: " << SDL_GetError() << std::endl;
-//                    break;
-//                }
-                
                 //Apply the PNG image
-
-                
                 SDL_BlitSurface( background, nullptr, gScreenSurface, nullptr );
                 for(int i = 0; i < TOTAL_BUTTONS; i++)
                 {
-                    SDL_BlitSurface( nrButtons[i], nullptr, gScreenSurface, &prop_buttons[i] );
+                    SDL_BlitSurface( Buttons[i], nullptr, gScreenSurface, &prop_buttons[i] );
                 }
                 
-                SDL_BlitSurface(textSurface, nullptr, gScreenSurface, &textLocation);
+                SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
                 
                 //Handle button events
                 for( int i = 0; i < TOTAL_BUTTONS; ++i )
                 {
-                    gButtons[ i ].handleEvent( &e );
+                    gButtons[ i ].handleEvent( &e, i+1 );
                 }
                 
                 //Update the surface
