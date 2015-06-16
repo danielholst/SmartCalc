@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <stdio.h>
 #include <SDL2/SDL.h>
@@ -21,11 +22,11 @@ const int SCREEN_HEIGHT = 600;
 //Button constants
 const int BUTTON_WIDTH = 100;
 const int BUTTON_HEIGHT = 100;
-const int TOTAL_BUTTONS = 16;
+const int TOTAL_BUTTONS = 18;
 
 //text string
 int textSize = 0;
-char text[20] = " ";
+char text[30] = " ";
 
 //Starts up SDL and creates window
 bool init();
@@ -34,7 +35,7 @@ bool init();
 bool loadMedia();
 
 //set properties of rect
-void setRectProperties(SDL_Rect& prop_button_9, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT);
+void setRectProperties(SDL_Rect& prop_button_9, int nr);
 
 //Frees media and shuts down SDL
 void close();
@@ -58,16 +59,21 @@ SDL_Surface* Buttons[TOTAL_BUTTONS];
 SDL_Surface* display = nullptr;
 
 //Load a font
-TTF_Font *font = nullptr;
+TTF_Font *font  = TTF_OpenFont("FreeSans.ttf", 20);
 
 //Text
 SDL_Surface* textSurface = nullptr;
+
+//text colors
+SDL_Color textForegroundColor = { 255, 255, 255 };
+SDL_Color textBackgroundColor = { 0, 0, 0 };
 
 //Text location
 SDL_Rect textLocation;
 
 //properties for buttons
 SDL_Rect prop_buttons[TOTAL_BUTTONS];
+
 
 
 enum LButtonSprite
@@ -169,21 +175,33 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                     break;
                     
                 case SDL_MOUSEBUTTONDOWN:
-                    std::cout << " pressed button: " << nr << std::endl;
-                    if(textSize < 30)
-                    {
-                        char temp[5];
-                        temp + std::to_string(nr);
-                        std::strcat(text, temp);
-                        textSize++;
-                    }
+//                    std::cout << " pressed button: " << nr << std::endl;
                     
                     mCurrentSprite = BUTTON_SPRITE_MOUSE_DOWN;
                     break;
                     
                 case SDL_MOUSEBUTTONUP:
-//                    text = text + '9';
-//                    textSize++;
+                    //check if pressed down before
+                    if(mCurrentSprite == BUTTON_SPRITE_MOUSE_DOWN)
+                    {
+                        if(textSize < 30)
+                        {
+                            std::stringstream ss;
+                            ss << " " << nr;
+                            ss.str().c_str();
+                            size_t size = ss.str().length() + 1;
+                            char* message = new char[size];
+                            memcpy(message, ss.str().c_str(), size);
+                            message[size - 1] = char(0);
+                            
+                            std::strcat(text, message);
+                            textSize++;
+                            delete [] message;
+                        }
+                    }
+                    
+                    std::cout << " pressed button: " << nr << std::endl;
+
                     mCurrentSprite = BUTTON_SPRITE_MOUSE_UP;
                     break;
             }
@@ -279,18 +297,23 @@ bool loadMedia()
     for( int i = 0; i < TOTAL_BUTTONS; i++)
     {
         Buttons[i] = loadSurface( "Images/button_" + std::to_string(i + 1) + ".png" );
-        setRectProperties(prop_buttons[i], i+1, SCREEN_WIDTH, SCREEN_HEIGHT);
+        setRectProperties(prop_buttons[i], i+1);
     }
     
     return success;
 }
 
-void setRectProperties(SDL_Rect& prop_button, int nr, int SCREEN_WIDTH, int SCREEN_HEIGHT)
+void updateText()
+{
+    textSurface = TTF_RenderText_Shaded(font, text , textForegroundColor, textBackgroundColor );
+}
+
+void setRectProperties(SDL_Rect& prop_button, int nr)
 {
     int tempX = 0;
     int tempY = 0;
     
-    if( nr == 11)
+    if( nr == 11 || nr == 17 || nr == 18)
     {
         prop_button.y = 125;
         tempY = 125;
@@ -321,20 +344,25 @@ void setRectProperties(SDL_Rect& prop_button, int nr, int SCREEN_WIDTH, int SCRE
     }
 
     // 30+75+30+75+30
-    if( nr == 9 || nr == 6 || nr == 3)  // right column
+    if( nr == 9 || nr == 6 || nr == 3 )  // right column
     {
         prop_button.x = 240;
         tempX = 240;
     }
     
+    if( nr == 18)
+    {
+        prop_button.x = 170;
+        tempX = 135;
+    }
     // 30+75+30
-    if( nr == 8 || nr == 5 || nr == 2 || nr == 10)  //middle column
+    if( nr == 8 || nr == 5 || nr == 2 || nr == 10 )  //middle column
     {
         prop_button.x = 135;
         tempX = 135;
     } 
     
-    if( nr == 7 || nr == 4 || nr == 1 || nr == 16)  // left column
+    if( nr == 7 || nr == 4 || nr == 1 || nr == 16 || nr == 17)  // left column
     {
         prop_button.x = 30;
         tempX = 30;
@@ -436,6 +464,7 @@ int main( int argc, char* args[] )
                     SDL_BlitSurface( Buttons[i], nullptr, gScreenSurface, &prop_buttons[i] );
                 }
                 
+                updateText();
                 SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
                 
                 //Handle button events
