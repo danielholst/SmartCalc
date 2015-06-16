@@ -26,7 +26,7 @@ const int TOTAL_BUTTONS = 18;
 
 //text string
 int textSize = 0;
-char text[30] = " ";
+char text[30] = "";
 
 //Starts up SDL and creates window
 bool init();
@@ -36,6 +36,9 @@ bool loadMedia();
 
 //set properties of rect
 void setRectProperties(SDL_Rect& prop_button_9, int nr);
+
+//get special char
+char getSpecialChar(int nr);
 
 //Frees media and shuts down SDL
 void close();
@@ -52,6 +55,9 @@ SDL_Surface* gScreenSurface = nullptr;
 //Current displayed PNG image
 SDL_Surface* background = nullptr;
 
+//Surface for logo
+SDL_Surface* logo = nullptr;
+
 //button (9)
 SDL_Surface* Buttons[TOTAL_BUTTONS];
 
@@ -59,17 +65,20 @@ SDL_Surface* Buttons[TOTAL_BUTTONS];
 SDL_Surface* display = nullptr;
 
 //Load a font
-TTF_Font *font  = TTF_OpenFont("FreeSans.ttf", 20);
+TTF_Font *font  = nullptr;
 
 //Text
 SDL_Surface* textSurface = nullptr;
 
 //text colors
-SDL_Color textForegroundColor = { 255, 255, 255 };
-SDL_Color textBackgroundColor = { 0, 0, 0 };
+SDL_Color textForegroundColor;
+SDL_Color textBackgroundColor;
 
 //Text location
 SDL_Rect textLocation;
+
+//Logo location
+SDL_Rect logoLocation;
 
 //properties for buttons
 SDL_Rect prop_buttons[TOTAL_BUTTONS];
@@ -187,7 +196,29 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                         if(textSize < 30)
                         {
                             std::stringstream ss;
-                            ss << " " << nr;
+                            //get special char for operations
+                            if( nr >= 11 && nr <= 14)
+                            {
+                                ss << " " << getSpecialChar(nr);
+                            }
+                            else if(nr == 15)
+                            {
+                                //TODO (answer)
+                                std::cout << "answer" << std::endl;
+                            }
+                            else if(nr == 16)
+                            {
+                                std::strcpy(text, "");
+                            }
+                            else if(nr == 17)
+                            {
+                                //TODO (save answer)
+                            }
+                            else
+                            {
+                                ss << " " << nr;
+                            }
+                        
                             ss.str().c_str();
                             size_t size = ss.str().length() + 1;
                             char* message = new char[size];
@@ -199,8 +230,6 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             delete [] message;
                         }
                     }
-                    
-                    std::cout << " pressed button: " << nr << std::endl;
 
                     mCurrentSprite = BUTTON_SPRITE_MOUSE_UP;
                     break;
@@ -214,8 +243,6 @@ LButton gButtons[TOTAL_BUTTONS];
 
 bool init()
 {
-    //text[1] = 3;
-    
     // Initialize SDL_ttf library
     if (TTF_Init() != 0)
     {
@@ -224,10 +251,13 @@ bool init()
         exit(1);
     }
     
-    TTF_Font* font = TTF_OpenFont("FreeSans.ttf", 20);
-    SDL_Color foregroundColor = { 255, 255, 255 };
-    SDL_Color backgroundColor = { 0, 0, 0 };
-    textSurface = TTF_RenderText_Shaded(font, text , foregroundColor, backgroundColor );
+    font  = TTF_OpenFont("FreeSans.ttf", 20);
+    
+    //text colors
+    textForegroundColor = { 0, 0, 0 };
+    textBackgroundColor = { 0, 100, 0 };
+    
+    textSurface = TTF_RenderText_Shaded(font, text , textForegroundColor, textBackgroundColor );
     
     //Initialization flag
     bool success = true;
@@ -252,6 +282,10 @@ bool init()
             //Init rect for text field
             textLocation.x = 30;
             textLocation.y = 30;
+            
+            //init rect for logo field
+            logoLocation.x = 400;
+            logoLocation.y = 0;
             
             //Initialize PNG loading
             int imgFlags = IMG_INIT_PNG;
@@ -293,11 +327,19 @@ bool loadMedia()
         success = false;
     }
     
+    //Load logo texture
+    logo = loadSurface("Images/logo.png");
+    if( logo == nullptr )
+    {
+        printf( "Failed to load logo texture!\n" );
+        success = false;
+    }
+    
     //load button textures
     for( int i = 0; i < TOTAL_BUTTONS; i++)
     {
-        Buttons[i] = loadSurface( "Images/button_" + std::to_string(i + 1) + ".png" );
-        setRectProperties(prop_buttons[i], i+1);
+        Buttons[i] = loadSurface( "Images/button_" + std::to_string(i) + ".png" );
+        setRectProperties(prop_buttons[i], i);
     }
     
     return success;
@@ -308,12 +350,27 @@ void updateText()
     textSurface = TTF_RenderText_Shaded(font, text , textForegroundColor, textBackgroundColor );
 }
 
+char getSpecialChar(int nr)
+{
+    char operation = '\0';
+    if( nr == 11)
+        operation = '+';
+    if( nr == 12)
+        operation = '/';
+    if( nr == 13)
+        operation = '-';
+    if( nr == 14)
+        operation = '*';
+    
+    return operation;
+}
+
 void setRectProperties(SDL_Rect& prop_button, int nr)
 {
     int tempX = 0;
     int tempY = 0;
     
-    if( nr == 11 || nr == 17 || nr == 18)
+    if( nr == 11 || nr == 16 || nr == 17)
     {
         prop_button.y = 125;
         tempY = 125;
@@ -325,7 +382,7 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
         tempY = 210;
     }
     
-    if( nr == 6 || nr == 5 || nr == 4 || nr == 15) // middle row
+    if( nr == 6 || nr == 5 || nr == 4 || nr == 14) // middle row
     {
         prop_button.y = 305;
         tempY = 305;
@@ -337,7 +394,7 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
         tempY = 400;
     }
     
-    if( nr == 16 || nr == 10 || nr == 14)
+    if( nr == 0 || nr == 10 || nr == 15)
     {
         prop_button.y = 495;
         tempY = 495;
@@ -346,23 +403,23 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
     // 30+75+30+75+30
     if( nr == 9 || nr == 6 || nr == 3 )  // right column
     {
-        prop_button.x = 240;
+        prop_button.x = 220;
         tempX = 240;
     }
     
-    if( nr == 18)
+    if( nr == 17)
     {
-        prop_button.x = 170;
+        prop_button.x = 160;
         tempX = 135;
     }
     // 30+75+30
     if( nr == 8 || nr == 5 || nr == 2 || nr == 10 )  //middle column
     {
-        prop_button.x = 135;
+        prop_button.x = 125;
         tempX = 135;
     } 
     
-    if( nr == 7 || nr == 4 || nr == 1 || nr == 16 || nr == 17)  // left column
+    if( nr == 7 || nr == 4 || nr == 1 || nr == 0)  // left column
     {
         prop_button.x = 30;
         tempX = 30;
@@ -374,8 +431,11 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
         tempX = 320;
     }
     
+    if(nr == 16)
+        prop_button.x = 25;
+    
     //set right position for invisible clickable button
-    gButtons[nr-1].setPosition( tempX, tempY);
+    gButtons[nr].setPosition( tempX, tempY);
 }
 
 void close()
@@ -465,12 +525,17 @@ int main( int argc, char* args[] )
                 }
                 
                 updateText();
+                
+                //add display surface to layout
                 SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
+                
+                //add logo surface to layout
+                SDL_BlitSurface(logo, 0, gScreenSurface, &logoLocation);
                 
                 //Handle button events
                 for( int i = 0; i < TOTAL_BUTTONS; ++i )
                 {
-                    gButtons[ i ].handleEvent( &e, i+1 );
+                    gButtons[ i ].handleEvent( &e, i );
                 }
                 
                 //Update the surface
