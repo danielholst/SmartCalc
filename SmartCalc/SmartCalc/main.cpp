@@ -28,8 +28,23 @@ const int TOTAL_BUTTONS = 18;
 int textSize = 0;
 char text[30] = "";
 
+//saved values
+const int SAVED_VALUES_SLOTS = 6;
+int SAVED_VALUES = 0;
+
 //Starts up SDL and creates window
 bool init();
+
+//update text
+void updateText();
+//save answer
+void saveAnswer(char answer[]);
+
+//calculate answer
+double getAnswer(char equation[]);
+
+//remove white spaces from text string
+void removeSpaces(std::string& eq);
 
 //Loads media
 bool loadMedia();
@@ -70,12 +85,19 @@ TTF_Font *font  = nullptr;
 //Text
 SDL_Surface* textSurface = nullptr;
 
+//saved answers
+SDL_Surface* savedAnswerSurface[SAVED_VALUES_SLOTS];
+
 //text colors
 SDL_Color textForegroundColor;
 SDL_Color textBackgroundColor;
+SDL_Color textBackgroundColor2;
 
-//Text location
+// display ext location
 SDL_Rect textLocation;
+
+// saved answers text
+SDL_Rect savedAnswersLocation[SAVED_VALUES_SLOTS];
 
 //Logo location
 SDL_Rect logoLocation;
@@ -199,24 +221,36 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             //get special char for operations
                             if( nr >= 11 && nr <= 14)
                             {
-                                ss << " " << getSpecialChar(nr);
+                                if( nr == 11 || nr == 13)
+                                    ss <<" " << getSpecialChar(nr) << " ";
+                                else
+                                    ss << getSpecialChar(nr);
                             }
-                            else if(nr == 15)
+                            
+                            else if(nr == 15)   // =
                             {
                                 //TODO (answer)
-                                std::cout << "answer" << std::endl;
+                                double answer = getAnswer(text);
+                                ss << answer;
                             }
-                            else if(nr == 16)
+                            else if(nr == 16)   // clear
                             {
-                                std::strcpy(text, "");
+                                ss << "";
+                                
                             }
-                            else if(nr == 17)
+                            else if(nr == 17)   // save
                             {
                                 //TODO (save answer)
+                                if(SAVED_VALUES != SAVED_VALUES_SLOTS)
+                                {
+                                    saveAnswer(text);
+                                    SAVED_VALUES++;
+                                    std::cout << "used slots: " <<  SAVED_VALUES << std::endl;
+                                }
                             }
                             else
                             {
-                                ss << " " << nr;
+                                ss << nr;
                             }
                         
                             ss.str().c_str();
@@ -224,10 +258,16 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             char* message = new char[size];
                             memcpy(message, ss.str().c_str(), size);
                             message[size - 1] = char(0);
-                            
-                            std::strcat(text, message);
+                            if(nr == 15 || nr == 16)
+                            {
+                                std::strcpy(text, message);
+                            }
+                            else
+                                std::strcat(text, message);
                             textSize++;
+                            updateText();
                             delete [] message;
+                            std::cout << "text = " << text << std::endl;
                         }
                     }
 
@@ -251,11 +291,12 @@ bool init()
         exit(1);
     }
     
-    font  = TTF_OpenFont("FreeSans.ttf", 20);
+    font  = TTF_OpenFont("FreeSans.ttf", 18);
     
     //text colors
     textForegroundColor = { 0, 0, 0 };
-    textBackgroundColor = { 0, 100, 0 };
+    textBackgroundColor = { 221, 243, 130 };
+    textBackgroundColor2 = { 255, 255, 255 };
     
     textSurface = TTF_RenderText_Shaded(font, text , textForegroundColor, textBackgroundColor );
     
@@ -280,13 +321,18 @@ bool init()
         else
         {
             //Init rect for text field
-            textLocation.x = 30;
-            textLocation.y = 30;
+            textLocation.x = 40;
+            textLocation.y = 40;
             
             //init rect for logo field
             logoLocation.x = 400;
             logoLocation.y = 0;
             
+            for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
+            {
+                savedAnswersLocation[i].x = 670;
+                savedAnswersLocation[i].y = 250 + i*50;
+            }
             //Initialize PNG loading
             int imgFlags = IMG_INIT_PNG;
             if( !( IMG_Init( imgFlags ) & imgFlags ) )
@@ -328,7 +374,7 @@ bool loadMedia()
     }
     
     //Load logo texture
-    logo = loadSurface("Images/logo.png");
+    logo = loadSurface("Images/savedValues.png");
     if( logo == nullptr )
     {
         printf( "Failed to load logo texture!\n" );
@@ -343,6 +389,40 @@ bool loadMedia()
     }
     
     return success;
+}
+
+//save answer
+void saveAnswer(char answer[])
+{
+    savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, answer , textForegroundColor, textBackgroundColor2 );
+}
+
+//remove spaces in string
+void removeSpaces(std::string& eq)
+{
+    std::string temp = "";
+    for(size_t i = 0; i < eq.length(); i++)
+        if(eq[i] != ' ')
+            temp += eq[i];
+    eq = temp;
+}
+
+double getAnswer(char eq[])
+{
+    double answer = 0;
+    std::string equation(eq);
+    
+    //remove empty spaces
+    removeSpaces(equation);
+    std::cout << "answer = " << equation << std::endl;  //debug
+    
+    //divide numbers and operations
+//    int tokensInString = equation.size();
+    
+    //do operations
+    
+    //return answer
+    return answer;
 }
 
 void updateText()
@@ -507,6 +587,7 @@ int main( int argc, char* args[] )
             //While application is running
             while( !quit )
             {
+                
                 //Handle events on queue
                 while( SDL_PollEvent( &e ) != 0 )
                 {
@@ -519,23 +600,29 @@ int main( int argc, char* args[] )
                 
                 //Apply the PNG image
                 SDL_BlitSurface( background, nullptr, gScreenSurface, nullptr );
+                //add logo surface to layout
+                SDL_BlitSurface(logo, 0, gScreenSurface, &logoLocation);
+
+                //add buttons
                 for(int i = 0; i < TOTAL_BUTTONS; i++)
                 {
                     SDL_BlitSurface( Buttons[i], nullptr, gScreenSurface, &prop_buttons[i] );
                 }
-                
-                updateText();
-                
-                //add display surface to layout
-                SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
-                
-                //add logo surface to layout
-                SDL_BlitSurface(logo, 0, gScreenSurface, &logoLocation);
+            
                 
                 //Handle button events
                 for( int i = 0; i < TOTAL_BUTTONS; ++i )
                 {
                     gButtons[ i ].handleEvent( &e, i );
+                }
+                
+                //add display surface to layout
+                SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
+                
+                //surface for saved values
+                for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
+                {
+                    SDL_BlitSurface(savedAnswerSurface[i], 0, gScreenSurface, &savedAnswersLocation[i]);
                 }
                 
                 //Update the surface
