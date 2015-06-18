@@ -31,6 +31,11 @@ char text[30] = "";
 //saved values
 const int SAVED_VALUES_SLOTS = 6;
 int SAVED_VALUES = 0;
+bool SAVE_BUTTON_ACTIVE = false;
+char variableName[15] = "";
+char *composition;
+Sint32 cursor;
+Sint32 selection_len;
 
 //Starts up SDL and creates window
 bool init();
@@ -66,6 +71,9 @@ SDL_Window* gWindow = nullptr;
 
 //The surface contained by the window
 SDL_Surface* gScreenSurface = nullptr;
+
+//Popup window
+SDL_Surface* popupSurface = nullptr;
 
 //Current displayed PNG image
 SDL_Surface* background = nullptr;
@@ -104,6 +112,9 @@ SDL_Rect logoLocation;
 
 //properties for buttons
 SDL_Rect prop_buttons[TOTAL_BUTTONS];
+
+// properties for popup
+SDL_Rect popUpLocation;
 
 
 
@@ -219,7 +230,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                         {
                             std::stringstream ss;
                             //get special char for operations
-                            if( nr >= 11 && nr <= 14)
+                            if( nr >= 10 && nr <= 14)
                             {
                                 if( nr == 11 || nr == 13)
                                     ss <<" " << getSpecialChar(nr) << " ";
@@ -245,6 +256,8 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                                 {
                                     saveAnswer(text);
                                     SAVED_VALUES++;
+                                    //add popup surface to layout
+                                    SAVE_BUTTON_ACTIVE = true;
                                     std::cout << "used slots: " <<  SAVED_VALUES << std::endl;
                                 }
                             }
@@ -328,6 +341,10 @@ bool init()
             logoLocation.x = 400;
             logoLocation.y = 0;
             
+            //init rect for popup
+            popUpLocation.x = 200;
+            popUpLocation.y = 100;
+            
             for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
             {
                 savedAnswersLocation[i].x = 670;
@@ -370,6 +387,14 @@ bool loadMedia()
     if( background == nullptr )
     {
         printf( "Failed to load PNG image!\n" );
+        success = false;
+    }
+    
+    //Load popup surface    TODO fix texture for this
+    popupSurface = loadSurface("Images/popUp.png");
+    if( popupSurface == nullptr )
+    {
+        printf( "Failed to load popup image!\n" );
         success = false;
     }
     
@@ -433,6 +458,8 @@ void updateText()
 char getSpecialChar(int nr)
 {
     char operation = '\0';
+    if(nr == 10)
+        operation = '.';
     if( nr == 11)
         operation = '+';
     if( nr == 12)
@@ -523,6 +550,10 @@ void close()
     //Free loaded image
     SDL_FreeSurface( background );
     background = nullptr;
+    SDL_FreeSurface( textSurface );
+    textSurface = nullptr;
+    SDL_FreeSurface( popupSurface );
+    popupSurface = nullptr;
     
     //Destroy window
     SDL_DestroyWindow( gWindow );
@@ -584,9 +615,19 @@ int main( int argc, char* args[] )
             //Event handler
             SDL_Event e;
             
+            //The current input text.
+            std::string inputText = "Some Text";
+             popupSurface = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor);
+//            gInputTextTexture.loadFromRenderedText( inputText.c_str(), textForegroundColor );
+            
+            //Enable text input
+            SDL_StartTextInput();
+            
             //While application is running
             while( !quit )
             {
+                //The rerender text flag
+                bool renderText = false;
                 
                 //Handle events on queue
                 while( SDL_PollEvent( &e ) != 0 )
@@ -596,33 +637,92 @@ int main( int argc, char* args[] )
                     {
                         quit = true;
                     }
-                }
+                    //Special key input
+                    else if( e.type == SDL_KEYDOWN )
+                    {
+                        //Handle backspace
+                        if( e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0 )
+                        {
+                            //lop off character
+                            inputText.pop_back();
+                            renderText = true;
+                        }
+                        //Handle copy
+                        else if( e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
+                        {
+                            SDL_SetClipboardText( inputText.c_str() );
+                        }
+                        //Handle paste
+                        else if( e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL )
+                        {
+                            inputText = SDL_GetClipboardText();
+                            renderText = true;
+                        }
+                    }
+                    //Special text input event
+                    else if( e.type == SDL_TEXTINPUT )
+                    {
+                        //Not copy or pasting
+                        if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) )
+                        {
+                            //Append character
+                            inputText += e.text.text;
+                            renderText = true;
+                        }
+                    }
                 
-                //Apply the PNG image
-                SDL_BlitSurface( background, nullptr, gScreenSurface, nullptr );
-                //add logo surface to layout
-                SDL_BlitSurface(logo, 0, gScreenSurface, &logoLocation);
+                
+//                if(SAVE_BUTTON_ACTIVE == true)
+//                {
+//                    SDL_BlitSurface(popupSurface, 0, gScreenSurface, &popUpLocation);
+//                    //The current input text.
+//                    std::string inputText = "Some Text";
+//                    gInputTextTexture.loadFromRenderedText( inputText.c_str(), textForegroundColor );
+//                    SDL_StartTextInput();
+//                    switch (event.type)
+//                    {
+//                        case SDL_TEXTINPUT:
+//                            
+//                            std::strcat(variableName, event.text.text);
+//                            break;
+//                        case SDL_TEXTEDITING:
+//                            
+//                            composition = event.edit.text;
+//                            cursor = event.edit.start;
+//                            selection_len = event.edit.length;
+//                            break;
+//                        
+//                    }
+//                }
 
-                //add buttons
-                for(int i = 0; i < TOTAL_BUTTONS; i++)
+                else
                 {
-                    SDL_BlitSurface( Buttons[i], nullptr, gScreenSurface, &prop_buttons[i] );
-                }
-            
-                
-                //Handle button events
-                for( int i = 0; i < TOTAL_BUTTONS; ++i )
-                {
-                    gButtons[ i ].handleEvent( &e, i );
-                }
-                
-                //add display surface to layout
-                SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
-                
-                //surface for saved values
-                for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
-                {
-                    SDL_BlitSurface(savedAnswerSurface[i], 0, gScreenSurface, &savedAnswersLocation[i]);
+                    //Apply the PNG image
+                    SDL_BlitSurface( background, nullptr, gScreenSurface, nullptr );
+                    //add logo surface to layout
+                    SDL_BlitSurface(logo, 0, gScreenSurface, &logoLocation);
+                    
+                    //add buttons
+                    for(int i = 0; i < TOTAL_BUTTONS; i++)
+                    {
+                        SDL_BlitSurface( Buttons[i], nullptr, gScreenSurface, &prop_buttons[i] );
+                    }
+                    
+                    //Handle button events
+                    for( int i = 0; i < TOTAL_BUTTONS; ++i )
+                    {
+                        gButtons[ i ].handleEvent( &e, i );
+                    }
+                    
+                    //add display surface to layout
+                    SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
+                    
+                    //surface for saved values
+                    for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
+                    {
+                        SDL_BlitSurface(savedAnswerSurface[i], 0, gScreenSurface, &savedAnswersLocation[i]);
+                    }
+                    
                 }
                 
                 //Update the surface
@@ -636,4 +736,5 @@ int main( int argc, char* args[] )
     close();
     
     return 0;
+    }
 }
