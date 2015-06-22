@@ -55,11 +55,17 @@ void removeSpaces(std::string& eq);
 //Loads media
 bool loadMedia();
 
+//read from file to saved values
+void readFromFile();
+
 //set properties of rect
 void setRectProperties(SDL_Rect& prop_button_9, int nr);
 
 //get special char
 char getSpecialChar(int nr);
+
+//remove saved value
+void removeSavedValue(int nr);
 
 //Frees media and shuts down SDL
 void close();
@@ -78,18 +84,26 @@ SDL_Surface* gScreenSurface = nullptr;
 
 //Popup window
 SDL_Surface* popupSurface = nullptr;
+SDL_Rect popupLocation;
 
 //text surface for popup
 SDL_Surface* popupTextSurface = nullptr;
+SDL_Rect popupTextLocation;
 
 //Current displayed PNG image
 SDL_Surface* background = nullptr;
 
 //Surface for logo
 SDL_Surface* logo = nullptr;
+SDL_Rect logoLocation;
 
 //button (9)
 SDL_Surface* Buttons[TOTAL_BUTTONS];
+SDL_Rect prop_buttons[TOTAL_BUTTONS];
+
+//delete button for saved values
+SDL_Surface* deleteButton[SAVED_VALUES_SLOTS];
+SDL_Rect deleteButtonLocation[SAVED_VALUES_SLOTS];
 
 //display surface
 SDL_Surface* display = nullptr;
@@ -99,37 +113,20 @@ TTF_Font *font  = nullptr;
 
 //Text
 SDL_Surface* textSurface = nullptr;
+SDL_Rect textLocation;
 
 //saved answers
 SDL_Surface* savedAnswerSurface[SAVED_VALUES_SLOTS];
+SDL_Rect savedAnswersLocation[SAVED_VALUES_SLOTS];
 
 //saved answer names
 SDL_Surface* savedAnswersNameSurface[SAVED_VALUES_SLOTS];
+SDL_Rect savedAnswersNameLocation[SAVED_VALUES_SLOTS];
 
 //text colors
 SDL_Color textForegroundColor;
 SDL_Color textBackgroundColor;
 SDL_Color textBackgroundColor2;
-
-// display ext location
-SDL_Rect textLocation;
-
-// saved answers value location
-SDL_Rect savedAnswersLocation[SAVED_VALUES_SLOTS];
-
-// saved answers name location
-SDL_Rect savedAnswersNameLocation[SAVED_VALUES_SLOTS];
-
-//Logo location
-SDL_Rect logoLocation;
-
-//properties for buttons
-SDL_Rect prop_buttons[TOTAL_BUTTONS];
-
-// properties for popup
-SDL_Rect popupLocation;
-SDL_Rect popupTextLocation;
-
 
 
 enum LButtonSprite
@@ -276,6 +273,11 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                                     SAVE_BUTTON_ACTIVE = true;
                                 }
                             }
+                            else if(nr >= 20 && nr <= 26)   //delete saved value
+                            {
+                                std::cout << "remove saved value nr " << nr << std::endl;
+                                removeSavedValue( nr - 20 );
+                            }
                             else
                             {
                                 ss << nr;
@@ -308,6 +310,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
 
 //button object
 LButton gButtons[TOTAL_BUTTONS];
+LButton deleteButtons[SAVED_VALUES_SLOTS];
 
 bool init()
 {
@@ -365,11 +368,14 @@ bool init()
             
             for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
             {
-                savedAnswersLocation[i].x = 670;
+                savedAnswersLocation[i].x = 630;
                 savedAnswersLocation[i].y = 250 + i * 50;
                 
                 savedAnswersNameLocation[i].x = 450;
                 savedAnswersNameLocation[i].y = 250 + i * 50;
+                
+                deleteButtonLocation[i].x = 750;
+                deleteButtonLocation[i].y = 250 + i * 50;
             }
             //Initialize PNG loading
             int imgFlags = IMG_INIT_PNG;
@@ -394,7 +400,7 @@ bool loadMedia()
     //Loading success flag
     bool success = true;
     
-    font = TTF_OpenFont("FreeSans.ttf", 24);
+    font = TTF_OpenFont("FreeSans.ttf", 22);
     if (font == NULL)
     {
         std::cout << "TTF_OpenFont() Failed: " << TTF_GetError() << std::endl;
@@ -427,6 +433,13 @@ bool loadMedia()
         success = false;
     }
     
+    //load delete button textures
+    for (int i = 0; i < SAVED_VALUES_SLOTS; i++)
+    {
+        deleteButton[i] = loadSurface( "Images/deletebuttonInactive.png");
+        setRectProperties(deleteButtonLocation[i], 20+i);
+    }
+    
     //load button textures
     for( int i = 0; i < TOTAL_BUTTONS; i++)
     {
@@ -434,32 +447,82 @@ bool loadMedia()
         setRectProperties(prop_buttons[i], i);
     }
     
+    readFromFile();
+    
+    return success;
+}
+
+void readFromFile()
+{
     //load saved values from file
     std::ifstream infile("SavedValues.txt");
     double value;
     std::string name;
     while ( infile >> value >> name)
     {
-        //remove zeros at the end
+        //format text value
         std::string str = std::to_string (value);
         str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
+        std::string zeros = "0";
+        str.append(zeros);
         
         savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, str.c_str(), textForegroundColor, textBackgroundColor2 );
         
         savedAnswersNameSurface[SAVED_VALUES]  = TTF_RenderText_Shaded(font, name.c_str() , textForegroundColor, textBackgroundColor2 );
         
         SAVED_VALUES++;
-
+        
     }
     
+}
+void removeSavedValue(int nr)
+{
+    //open file
+    std::ifstream infile("SavedValues.txt");
+    std::string value;
+    std::string name;
+    int counter1 = 0;
+    int counter2 = 0;
+    while ( infile >> value >> name)
+    {
+        if(counter1 == nr)
+        {
+            //remove line
+            std::cout << "remove line " << counter1 << std::endl;
+            break;
+        }
+        counter1++;
+    }
+    infile.close();
     
-    return success;
+    std::ofstream outfile;
+    outfile.open("SavedValues.txt");
+    
+    if(counter1 == 0)
+        outfile << " " << " ";
+    else
+    {
+        while ( outfile << value << name)
+        {
+            if(counter2 == counter1)
+            {
+                
+            }
+            
+            counter2++;
+        }
+    }
+    outfile.close();
+    
+    SAVED_VALUES--;
+    
+    readFromFile();
 }
 
 //save answer
 void saveAnswer(char answer[])
 {
-    savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, answer , textForegroundColor, textBackgroundColor2 );
+    savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, answer , textForegroundColor, textBackgroundColor2);
     
     // add to file
     std::stringstream converter;
@@ -591,8 +654,17 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
     if(nr == 16)
         prop_button.x = 25;
     
-    //set right position for invisible clickable button
-    gButtons[nr].setPosition( tempX, tempY);
+    if(nr >= 20 && nr <= 26)
+    {
+        tempX = prop_button.x = 750;
+        tempY = prop_button.y = 250 + (nr-20) * 50;
+        deleteButtons[nr-20].setPosition(tempX, tempY);
+    }
+    
+    if( nr > 19 )
+        deleteButtons[nr-20].setPosition(tempX, tempY);
+    else
+        gButtons[nr].setPosition( tempX, tempY);
 }
 
 void saveValue(std::string inputText)
@@ -773,15 +845,25 @@ int main( int argc, char* args[] )
                     {
                         gButtons[ i ].handleEvent( &e, i );
                     }
+                    for(int i = 0; i < SAVED_VALUES; i++)
+                    {
+                        deleteButtons[i].handleEvent(&e, 20+i);
+                    }
                     
                     //add display surface to layout
                     SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
                     
                     //surface for saved values
-                    for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
+                    for(int i = 0; i < SAVED_VALUES; i++)
                     {
                         SDL_BlitSurface(savedAnswerSurface[i], 0, gScreenSurface, &savedAnswersLocation[i]);
                         SDL_BlitSurface(savedAnswersNameSurface[i], 0, gScreenSurface, &savedAnswersNameLocation[i]);
+                    }
+                    
+                    for(int i = 0; i < SAVED_VALUES; i++)
+                    {
+                        SDL_BlitSurface(deleteButton[i], 0, gScreenSurface, &deleteButtonLocation[i]);
+                        
                     }
                     
                 }
