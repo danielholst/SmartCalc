@@ -78,6 +78,9 @@ SDL_Surface* gScreenSurface = nullptr;
 //Popup window
 SDL_Surface* popupSurface = nullptr;
 
+//text surface for popup
+SDL_Surface* popupTextSurface = nullptr;
+
 //Current displayed PNG image
 SDL_Surface* background = nullptr;
 
@@ -123,7 +126,8 @@ SDL_Rect logoLocation;
 SDL_Rect prop_buttons[TOTAL_BUTTONS];
 
 // properties for popup
-SDL_Rect popUpLocation;
+SDL_Rect popupLocation;
+SDL_Rect popupTextLocation;
 
 
 
@@ -269,7 +273,6 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                                     //Enable text input
                                     SDL_StartTextInput();
                                     SAVE_BUTTON_ACTIVE = true;
-                                    std::cout << "used slots: " <<  SAVED_VALUES << std::endl;
                                 }
                             }
                             else
@@ -353,8 +356,11 @@ bool init()
             logoLocation.y = 0;
             
             //init rect for popup
-            popUpLocation.x = 200;
-            popUpLocation.y = 100;
+            popupLocation.x = 200;
+            popupLocation.y = 100;
+            
+            popupTextLocation.x = 270;
+            popupTextLocation.y = 240;
             
             for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
             {
@@ -562,10 +568,9 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
 void saveValue(std::string inputText)
 {
     SAVE_BUTTON_ACTIVE = false;
-    std::cout << inputText << std::endl;
     //Disable text input
     SDL_StopTextInput();
-    savedAnswersNameSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor2 );
+    savedAnswersNameSurface[SAVED_VALUES - 1] = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor2 );
     
 }
 
@@ -639,7 +644,8 @@ int main( int argc, char* args[] )
             //Event handler
             SDL_Event e;
             
-//            gInputTextTexture.loadFromRenderedText( inputText.c_str(), textForegroundColor );
+            //The input text.
+            std::string inputText = "";
             
             //While application is running
             while( !quit )
@@ -658,10 +664,9 @@ int main( int argc, char* args[] )
                     //Special key input
                     else if(SAVE_BUTTON_ACTIVE == true)
                     {
-                        //The input text.
-                        std::string inputText = "";
+                        SDL_BlitSurface(popupSurface, 0, gScreenSurface, &popupLocation);
+                        SDL_BlitSurface(popupTextSurface, 0, gScreenSurface, &popupTextLocation);
                         
-                        SDL_BlitSurface(popupSurface, 0, gScreenSurface, &popUpLocation);
                         if( e.type == SDL_KEYDOWN )
                         {
                             //Handle backspace
@@ -705,7 +710,7 @@ int main( int argc, char* args[] )
                             }
                         }
                                           
-                            popupSurface = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor);
+                            popupTextSurface = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor);
                     }
                 
                 
