@@ -63,6 +63,9 @@ char getSpecialChar(int nr);
 //Frees media and shuts down SDL
 void close();
 
+//update and print out the save value name
+void saveValue(std::string inputText);
+
 //Loads individual image
 SDL_Surface* loadSurface( std::string path );
 
@@ -96,6 +99,9 @@ SDL_Surface* textSurface = nullptr;
 //saved answers
 SDL_Surface* savedAnswerSurface[SAVED_VALUES_SLOTS];
 
+//saved answer names
+SDL_Surface* savedAnswersNameSurface[SAVED_VALUES_SLOTS];
+
 //text colors
 SDL_Color textForegroundColor;
 SDL_Color textBackgroundColor;
@@ -104,8 +110,11 @@ SDL_Color textBackgroundColor2;
 // display ext location
 SDL_Rect textLocation;
 
-// saved answers text
+// saved answers value location
 SDL_Rect savedAnswersLocation[SAVED_VALUES_SLOTS];
+
+// saved answers name location
+SDL_Rect savedAnswersNameLocation[SAVED_VALUES_SLOTS];
 
 //Logo location
 SDL_Rect logoLocation;
@@ -257,6 +266,8 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                                     saveAnswer(text);
                                     SAVED_VALUES++;
                                     //add popup surface to layout
+                                    //Enable text input
+                                    SDL_StartTextInput();
                                     SAVE_BUTTON_ACTIVE = true;
                                     std::cout << "used slots: " <<  SAVED_VALUES << std::endl;
                                 }
@@ -280,7 +291,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             textSize++;
                             updateText();
                             delete [] message;
-                            std::cout << "text = " << text << std::endl;
+
                         }
                     }
 
@@ -348,7 +359,10 @@ bool init()
             for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
             {
                 savedAnswersLocation[i].x = 670;
-                savedAnswersLocation[i].y = 250 + i*50;
+                savedAnswersLocation[i].y = 250 + i * 50;
+                
+                savedAnswersNameLocation[i].x = 450;
+                savedAnswersNameLocation[i].y = 250 + i * 50;
             }
             //Initialize PNG loading
             int imgFlags = IMG_INIT_PNG;
@@ -545,6 +559,16 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
     gButtons[nr].setPosition( tempX, tempY);
 }
 
+void saveValue(std::string inputText)
+{
+    SAVE_BUTTON_ACTIVE = false;
+    std::cout << inputText << std::endl;
+    //Disable text input
+    SDL_StopTextInput();
+    savedAnswersNameSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor2 );
+    
+}
+
 void close()
 {
     //Free loaded image
@@ -615,13 +639,7 @@ int main( int argc, char* args[] )
             //Event handler
             SDL_Event e;
             
-            //The current input text.
-            std::string inputText = "Some Text";
-             popupSurface = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor);
 //            gInputTextTexture.loadFromRenderedText( inputText.c_str(), textForegroundColor );
-            
-            //Enable text input
-            SDL_StartTextInput();
             
             //While application is running
             while( !quit )
@@ -638,63 +656,60 @@ int main( int argc, char* args[] )
                         quit = true;
                     }
                     //Special key input
-                    else if( e.type == SDL_KEYDOWN )
+                    else if(SAVE_BUTTON_ACTIVE == true)
                     {
-                        //Handle backspace
-                        if( e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0 )
+                        //The input text.
+                        std::string inputText = "";
+                        
+                        SDL_BlitSurface(popupSurface, 0, gScreenSurface, &popUpLocation);
+                        if( e.type == SDL_KEYDOWN )
                         {
-                            //lop off character
-                            inputText.pop_back();
-                            renderText = true;
-                        }
-                        //Handle copy
-                        else if( e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
-                        {
-                            SDL_SetClipboardText( inputText.c_str() );
-                        }
-                        //Handle paste
-                        else if( e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL )
-                        {
-                            inputText = SDL_GetClipboardText();
-                            renderText = true;
-                        }
-                    }
-                    //Special text input event
-                    else if( e.type == SDL_TEXTINPUT )
-                    {
-                        //Not copy or pasting
-                        if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) )
-                        {
-                            //Append character
-                            inputText += e.text.text;
-                            renderText = true;
-                        }
-                    }
-                
-                
-//                if(SAVE_BUTTON_ACTIVE == true)
-//                {
-//                    SDL_BlitSurface(popupSurface, 0, gScreenSurface, &popUpLocation);
-//                    //The current input text.
-//                    std::string inputText = "Some Text";
-//                    gInputTextTexture.loadFromRenderedText( inputText.c_str(), textForegroundColor );
-//                    SDL_StartTextInput();
-//                    switch (event.type)
-//                    {
-//                        case SDL_TEXTINPUT:
-//                            
-//                            std::strcat(variableName, event.text.text);
-//                            break;
-//                        case SDL_TEXTEDITING:
-//                            
-//                            composition = event.edit.text;
-//                            cursor = event.edit.start;
-//                            selection_len = event.edit.length;
-//                            break;
-//                        
-//                    }
-//                }
+                            //Handle backspace
+                            if( e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0 )
+                            {
+                                //lop off character
+                                inputText.pop_back();
+                                renderText = true;
+                            }
+                        
+                            //if enter is pressed
+                            else if ( e.key.keysym.sym == SDLK_RETURN)
+                            {
+                                saveValue(inputText);
+                                inputText = "";
+                            }
+                            //Handle copy
+                            else if( e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
+                            {
+                                SDL_SetClipboardText( inputText.c_str() );
+                            }
+                            //Handle paste
+                            else if( e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL )
+                            {
+                                inputText = SDL_GetClipboardText();
+                                renderText = true;
+                            }
 
+                        }
+                        //Special text input event
+                        else if( e.type == SDL_TEXTINPUT )
+                        {
+
+                            //Not copy or pasting
+                            if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) )
+                            {
+                                //Append character
+                                inputText += e.text.text;
+                                renderText = true;
+                                std::cout << inputText << std::endl;
+                            }
+                        }
+                                          
+                            popupSurface = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor);
+                    }
+                
+                
+                
                 else
                 {
                     //Apply the PNG image
@@ -721,6 +736,7 @@ int main( int argc, char* args[] )
                     for(int i = 0; i < SAVED_VALUES_SLOTS; i++)
                     {
                         SDL_BlitSurface(savedAnswerSurface[i], 0, gScreenSurface, &savedAnswersLocation[i]);
+                        SDL_BlitSurface(savedAnswersNameSurface[i], 0, gScreenSurface, &savedAnswersNameLocation[i]);
                     }
                     
                 }
