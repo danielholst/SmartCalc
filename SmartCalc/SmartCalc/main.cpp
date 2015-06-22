@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <stdio.h>
 #include <SDL2/SDL.h>
@@ -433,6 +434,25 @@ bool loadMedia()
         setRectProperties(prop_buttons[i], i);
     }
     
+    //load saved values from file
+    std::ifstream infile("SavedValues.txt");
+    double value;
+    std::string name;
+    while ( infile >> value >> name)
+    {
+        //remove zeros at the end
+        std::string str = std::to_string (value);
+        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
+        
+        savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, str.c_str(), textForegroundColor, textBackgroundColor2 );
+        
+        savedAnswersNameSurface[SAVED_VALUES]  = TTF_RenderText_Shaded(font, name.c_str() , textForegroundColor, textBackgroundColor2 );
+        
+        SAVED_VALUES++;
+
+    }
+    
+    
     return success;
 }
 
@@ -440,6 +460,17 @@ bool loadMedia()
 void saveAnswer(char answer[])
 {
     savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, answer , textForegroundColor, textBackgroundColor2 );
+    
+    // add to file
+    std::stringstream converter;
+    converter << answer;
+    double value;
+    converter >> value;
+    
+    std::ofstream myfile;
+    myfile.open("SavedValues.txt", std::ios::app);
+    myfile << value;
+    
 }
 
 //remove spaces in string
@@ -527,7 +558,6 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
         tempY = 495;
     }
 
-    // 30+75+30+75+30
     if( nr == 9 || nr == 6 || nr == 3 )  // right column
     {
         prop_button.x = 220;
@@ -539,7 +569,7 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
         prop_button.x = 160;
         tempX = 135;
     }
-    // 30+75+30
+    
     if( nr == 8 || nr == 5 || nr == 2 || nr == 10 )  //middle column
     {
         prop_button.x = 125;
@@ -572,6 +602,15 @@ void saveValue(std::string inputText)
     SDL_StopTextInput();
     savedAnswersNameSurface[SAVED_VALUES - 1] = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor2 );
     
+    //save to file
+    std::ofstream myfile;
+    myfile.open("SavedValues.txt", std::ios::app);
+    
+    myfile << " " << inputText << std::endl;
+          
+    myfile.close();
+    
+    
 }
 
 void close()
@@ -583,6 +622,8 @@ void close()
     textSurface = nullptr;
     SDL_FreeSurface( popupSurface );
     popupSurface = nullptr;
+    SDL_FreeSurface(popupTextSurface);
+    popupTextSurface = nullptr;
     
     //Destroy window
     SDL_DestroyWindow( gWindow );
@@ -706,7 +747,6 @@ int main( int argc, char* args[] )
                                 //Append character
                                 inputText += e.text.text;
                                 renderText = true;
-                                std::cout << inputText << std::endl;
                             }
                         }
                                           
