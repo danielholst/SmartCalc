@@ -38,22 +38,6 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartCalc/main.cpp"
-            timestampString = "456160560.644826"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
-            landmarkName = "LButton::handleEvent( SDL_Event* e, int nr )"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartCalc/main.cpp"
             timestampString = "456165162.045765"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"

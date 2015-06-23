@@ -70,6 +70,9 @@ void removeSavedValue(int nr);
 //Frees media and shuts down SDL
 void close();
 
+//draw delete buttons
+void drawDeleteButtons(bool choice);
+
 //update and print out the save value name
 void saveValue(std::string inputText);
 
@@ -103,6 +106,7 @@ SDL_Rect prop_buttons[TOTAL_BUTTONS];
 
 //delete button for saved values
 SDL_Surface* deleteButton[SAVED_VALUES_SLOTS];
+SDL_Surface* deleteButtonActive[SAVED_VALUES_SLOTS];
 SDL_Rect deleteButtonLocation[SAVED_VALUES_SLOTS];
 
 //display surface
@@ -194,36 +198,44 @@ void LButton::handleEvent( SDL_Event* e, int nr )
         //Mouse is left of the button
         if( x < mPosition.x )
         {
+            drawDeleteButtons(true);
             inside = false;
         }
         //Mouse is right of the button
         else if( x > mPosition.x + BUTTON_WIDTH )
         {
+            drawDeleteButtons(true);
             inside = false;
         }
         //Mouse above the button
         else if( y < mPosition.y )
         {
+            drawDeleteButtons(true);
             inside = false;
         }
         //Mouse below the button
         else if( y > mPosition.y + BUTTON_HEIGHT )
         {
+            drawDeleteButtons(true);
             inside = false;
         }
         
         //Mouse is outside button
         if( !inside )
         {
+            drawDeleteButtons(true);
             mCurrentSprite = BUTTON_SPRITE_MOUSE_OUT;
         }
         //Mouse is inside button
         else
         {
+            drawDeleteButtons(false);
+            
             //Set mouse over sprite
             switch( e->type )
             {
                 case SDL_MOUSEMOTION:
+
                     mCurrentSprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
                     break;
                     
@@ -234,6 +246,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                     break;
                     
                 case SDL_MOUSEBUTTONUP:
+
                     //check if pressed down before
                     if(mCurrentSprite == BUTTON_SPRITE_MOUSE_DOWN)
                     {
@@ -262,14 +275,12 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             }
                             else if(nr == 17)   // save
                             {
-                                //TODO (save answer)
                                 if(SAVED_VALUES != SAVED_VALUES_SLOTS)
                                 {
                                     saveAnswer(text);
                                     SAVED_VALUES++;
-                                    //add popup surface to layout
-                                    //Enable text input
-                                    SDL_StartTextInput();
+                                    
+                                    SDL_StartTextInput();   //Enable text input
                                     SAVE_BUTTON_ACTIVE = true;
                                 }
                             }
@@ -417,7 +428,7 @@ bool loadMedia()
         success = false;
     }
     
-    //Load popup surface    TODO fix texture for this
+    //Load popup surface
     popupSurface = loadSurface("Images/popUp.png");
     if( popupSurface == nullptr )
     {
@@ -437,6 +448,7 @@ bool loadMedia()
     for (int i = 0; i < SAVED_VALUES_SLOTS; i++)
     {
         deleteButton[i] = loadSurface( "Images/deletebuttonInactive.png");
+        deleteButtonActive[i] = loadSurface( "Images/deletebuttonActive.png");
         setRectProperties(deleteButtonLocation[i], 20+i);
     }
     
@@ -452,6 +464,25 @@ bool loadMedia()
     return success;
 }
 
+void drawDeleteButtons(bool choice)
+{
+    if(choice)
+    {
+        //delete buttons
+        for(int i = 0; i < SAVED_VALUES; i++)
+        {
+            SDL_BlitSurface(deleteButton[i], 0, gScreenSurface, &deleteButtonLocation[i]);
+            
+        }
+    }
+    else
+        //delete buttons active
+        for(int i = 0; i < SAVED_VALUES; i++)
+        {
+            SDL_BlitSurface(deleteButtonActive[i], 0, gScreenSurface, &deleteButtonLocation[i]);
+            
+        }
+}
 void readFromFile()
 {
     //load saved values from file
@@ -658,7 +689,6 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
     {
         tempX = prop_button.x = 750;
         tempY = prop_button.y = 250 + (nr-20) * 50;
-        deleteButtons[nr-20].setPosition(tempX, tempY);
     }
     
     if( nr > 19 )
@@ -858,12 +888,6 @@ int main( int argc, char* args[] )
                     {
                         SDL_BlitSurface(savedAnswerSurface[i], 0, gScreenSurface, &savedAnswersLocation[i]);
                         SDL_BlitSurface(savedAnswersNameSurface[i], 0, gScreenSurface, &savedAnswersNameLocation[i]);
-                    }
-                    
-                    for(int i = 0; i < SAVED_VALUES; i++)
-                    {
-                        SDL_BlitSurface(deleteButton[i], 0, gScreenSurface, &deleteButtonLocation[i]);
-                        
                     }
                     
                 }
