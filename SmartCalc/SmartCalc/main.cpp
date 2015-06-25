@@ -14,6 +14,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_ttf/SDL_ttf.h>
+#include "EquationSolver.h"
 
 
 //Screen dimension constants
@@ -44,10 +45,10 @@ bool init();
 //update text
 void updateText();
 //save answer
-void saveAnswer(char answer[]);
+void saveAnswer(std::string answer);
 
 //calculate answer
-double getAnswer(char equation[]);
+std::string getAnswer(char equation[]);
 
 //remove white spaces from text string
 void removeSpaces(std::string& eq);
@@ -265,7 +266,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             else if(nr == 15)   // =
                             {
                                 //TODO (answer)
-                                double answer = getAnswer(text);
+                                std::string answer = getAnswer(text);
                                 ss << answer;
                             }
                             else if(nr == 16)   // clear
@@ -277,7 +278,8 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             {
                                 if(SAVED_VALUES != SAVED_VALUES_SLOTS)
                                 {
-                                    saveAnswer(text);
+                                    
+                                    saveAnswer(getAnswer(text));
                                     SAVED_VALUES++;
                                     
                                     SDL_StartTextInput();   //Enable text input
@@ -551,9 +553,9 @@ void removeSavedValue(int nr)
 }
 
 //save answer
-void saveAnswer(char answer[])
+void saveAnswer(std::string answer)
 {
-    savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, answer , textForegroundColor, textBackgroundColor2);
+    savedAnswerSurface[SAVED_VALUES] = TTF_RenderText_Shaded(font, answer.c_str() , textForegroundColor, textBackgroundColor2);
     
     // add to file
     std::stringstream converter;
@@ -577,14 +579,16 @@ void removeSpaces(std::string& eq)
     eq = temp;
 }
 
-double getAnswer(char eq[])
+std::string getAnswer(char eq[])
 {
-    double answer = 0;
+    std::string answer;
     std::string equation(eq);
     
     //remove empty spaces
     removeSpaces(equation);
     std::cout << "answer = " << equation << std::endl;  //debug
+    
+    answer = ES::solve(equation);
     
     //divide numbers and operations
 //    int tokensInString = equation.size();

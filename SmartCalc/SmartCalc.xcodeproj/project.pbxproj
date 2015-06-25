@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D10ADF751B3C86AE003A55F3 /* EquationSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10ADF731B3C86AE003A55F3 /* EquationSolver.cpp */; };
 		D145A0D71B2DC54A0061B7F4 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D145A0D61B2DC54A0061B7F4 /* SDL2_ttf.framework */; };
 		D18BB7E01B257B84004E3657 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D18BB7DF1B257B84004E3657 /* main.cpp */; };
 		D18BB7E51B257B84004E3657 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D18BB7E41B257B84004E3657 /* Images.xcassets */; };
@@ -27,6 +28,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D10ADF731B3C86AE003A55F3 /* EquationSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EquationSolver.cpp; sourceTree = "<group>"; };
+		D10ADF741B3C86AE003A55F3 /* EquationSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EquationSolver.h; sourceTree = "<group>"; };
 		D145A0D61B2DC54A0061B7F4 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 		D18BB7D71B257B84004E3657 /* SmartCalc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D18BB7DB1B257B84004E3657 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -97,6 +100,8 @@
 			children = (
 				D18BB7DB1B257B84004E3657 /* Info.plist */,
 				D18BB7DF1B257B84004E3657 /* main.cpp */,
+				D10ADF731B3C86AE003A55F3 /* EquationSolver.cpp */,
+				D10ADF741B3C86AE003A55F3 /* EquationSolver.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -201,6 +206,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D18BB7E01B257B84004E3657 /* main.cpp in Sources */,
+				D10ADF751B3C86AE003A55F3 /* EquationSolver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
