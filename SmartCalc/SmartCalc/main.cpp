@@ -474,7 +474,6 @@ void drawDeleteButtons(bool choice)
         for(int i = 0; i < SAVED_VALUES; i++)
         {
             SDL_BlitSurface(deleteButton[i], 0, gScreenSurface, &deleteButtonLocation[i]);
-            
         }
     }
     else
@@ -482,7 +481,6 @@ void drawDeleteButtons(bool choice)
         for(int i = 0; i < SAVED_VALUES; i++)
         {
             SDL_BlitSurface(deleteButtonActive[i], 0, gScreenSurface, &deleteButtonLocation[i]);
-            
         }
 }
 void readFromFile()
@@ -520,8 +518,6 @@ void removeSavedValue(int nr)
     {
         if(counter1 == nr)
         {
-            //remove line
-            std::cout << "remove line " << counter1 << std::endl;
             break;
         }
         counter1++;
@@ -531,19 +527,20 @@ void removeSavedValue(int nr)
     std::ofstream outfile;
     outfile.open("SavedValues.txt");
     
-    if(counter1 == 0)
+    if(nr == 0)
         outfile << " " << " ";
     else
     {
         while ( outfile << value << name)
         {
-            if(counter2 == counter1)
-            {
-                
-            }
-            
             counter2++;
+            
+            if(counter2 == nr)
+            {
+                break;
+            }
         }
+        outfile << " " << " ";
     }
     outfile.close();
     
@@ -581,22 +578,16 @@ void removeSpaces(std::string& eq)
 
 std::string getAnswer(char eq[])
 {
-    std::string answer;
     std::string equation(eq);
     
     //remove empty spaces
     removeSpaces(equation);
     std::cout << "answer = " << equation << std::endl;  //debug
     
-    answer = ES::solve(equation);
-    
-    //divide numbers and operations
-//    int tokensInString = equation.size();
-    
-    //do operations
+    equation = ES::solve(equation);
     
     //return answer
-    return answer;
+    return equation;
 }
 
 void updateText()
@@ -627,67 +618,36 @@ void setRectProperties(SDL_Rect& prop_button, int nr)
     int tempY = 0;
     
     if( nr == 11 || nr == 16 || nr == 17)
-    {
-        prop_button.y = 125;
-        tempY = 125;
-    }
-    
+        tempY = prop_button.y = 125;
+        
     if( nr == 9 || nr == 8 || nr == 7 || nr == 13) // top row
-    {
-        prop_button.y = 210;
-        tempY = 210;
-    }
-    
+        tempY = prop_button.y = 210;
+ 
     if( nr == 6 || nr == 5 || nr == 4 || nr == 14) // middle row
-    {
-        prop_button.y = 305;
-        tempY = 305;
-    }
-    
+        tempY = prop_button.y = 305;
+
     if( nr == 3 || nr == 2 || nr == 1 || nr == 12) // bottom row
-    {
-        prop_button.y = 400;
-        tempY = 400;
-    }
+        tempY = prop_button.y = 400;
     
     if( nr == 0 || nr == 10 || nr == 15)
-    {
-        prop_button.y = 495;
-        tempY = 495;
-    }
+        tempY = prop_button.y = 495;
 
     if( nr == 9 || nr == 6 || nr == 3 )  // right column
-    {
-        prop_button.x = 220;
-        tempX = 240;
-    }
-    
-    if( nr == 17)
-    {
-        prop_button.x = 160;
-        tempX = 135;
-    }
-    
+        tempX = prop_button.x = 220;
+
     if( nr == 8 || nr == 5 || nr == 2 || nr == 10 )  //middle column
-    {
-        prop_button.x = 125;
-        tempX = 135;
-    } 
+        tempX = prop_button.x = 125;
     
     if( nr == 7 || nr == 4 || nr == 1 || nr == 0)  // left column
-    {
-        prop_button.x = 30;
-        tempX = 30;
-    }
-    
+        tempX = prop_button.x = 30;
+
     if( nr == 11 || nr == 12 || nr == 13  || nr == 14  || nr == 15 )
-    {
-        prop_button.x = 320;
-        tempX = 320;
-    }
+        tempX = prop_button.x = 320;
     
     if(nr == 16)
-        prop_button.x = 25;
+        tempX = prop_button.x = 25;
+    if( nr == 17)
+        tempX = prop_button.x = 160;
     
     if(nr >= 20 && nr <= 26)
     {
