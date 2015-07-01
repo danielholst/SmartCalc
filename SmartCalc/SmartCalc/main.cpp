@@ -241,8 +241,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                     break;
                     
                 case SDL_MOUSEBUTTONDOWN:
-//                    std::cout << " pressed button: " << nr << std::endl;
-                    
+        
                     mCurrentSprite = BUTTON_SPRITE_MOUSE_DOWN;
                     break;
                     
@@ -288,7 +287,6 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             }
                             else if(nr >= 20 && nr <= 26)   //delete saved value
                             {
-                                std::cout << "remove saved value nr " << nr << std::endl;
                                 removeSavedValue( nr - 20 );
                             }
                             else
@@ -307,6 +305,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
                             }
                             else
                                 std::strcat(text, message);
+
                             textSize++;
                             updateText();
                             delete [] message;
@@ -321,7 +320,7 @@ void LButton::handleEvent( SDL_Event* e, int nr )
     }
 }
 
-//button object
+//button objects
 LButton gButtons[TOTAL_BUTTONS];
 LButton deleteButtons[SAVED_VALUES_SLOTS];
 
@@ -730,7 +729,6 @@ SDL_Surface* loadSurface( std::string path )
 
 int main( int argc, char* args[] )
 {
-
     //Start up SDL and create window
     if( !init() )
     {
@@ -783,7 +781,6 @@ int main( int argc, char* args[] )
                                 inputText.pop_back();
                                 renderText = true;
                             }
-                        
                             //if enter is pressed
                             else if ( e.key.keysym.sym == SDLK_RETURN)
                             {
@@ -806,7 +803,6 @@ int main( int argc, char* args[] )
                         //Special text input event
                         else if( e.type == SDL_TEXTINPUT )
                         {
-
                             //Not copy or pasting
                             if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) )
                             {
@@ -818,9 +814,7 @@ int main( int argc, char* args[] )
                                           
                             popupTextSurface = TTF_RenderText_Shaded(font, inputText.c_str(), textForegroundColor, textBackgroundColor);
                     }
-                
-                
-                
+        
                 else
                 {
                     //Apply the PNG image
@@ -833,7 +827,6 @@ int main( int argc, char* args[] )
                     {
                         SDL_BlitSurface( Buttons[i], nullptr, gScreenSurface, &prop_buttons[i] );
                     }
-                    
                     //Handle button events
                     for( int i = 0; i < TOTAL_BUTTONS; ++i )
                     {
@@ -843,7 +836,6 @@ int main( int argc, char* args[] )
                     {
                         deleteButtons[i].handleEvent(&e, 20+i);
                     }
-                    
                     //add display surface to layout
                     SDL_BlitSurface(textSurface, 0, gScreenSurface, &textLocation);
                     
@@ -853,12 +845,10 @@ int main( int argc, char* args[] )
                         SDL_BlitSurface(savedAnswerSurface[i], 0, gScreenSurface, &savedAnswersLocation[i]);
                         SDL_BlitSurface(savedAnswersNameSurface[i], 0, gScreenSurface, &savedAnswersNameLocation[i]);
                     }
-                    
                 }
                 
                 //Update the surface
                 SDL_UpdateWindowSurface( gWindow );
-
             }
         }
     }
